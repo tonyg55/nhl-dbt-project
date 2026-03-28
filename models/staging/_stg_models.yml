@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: stg_player_season_stats
+    description: >
+      Typed and cleaned regular-season stats per player per season.
+      Covers Wayne Gretzky and a set of all-time scoring peers for comparison.
+    columns:
+      - name: player_id
+        description: NHL API player identifier.
+        tests:
+          - not_null
+      - name: season_year
+        description: The calendar year the season ended (e.g. 1980 for the 1979-80 season).
+        tests:
+          - not_null
+      - name: games_played
+        description: Regular season games played. Rows with 0 games are filtered out.
+        tests:
+          - not_null
+      - name: points
+        description: Total points (goals + assists) for the season.
+
+  - name: stg_award_winners
+    description: >
+      Art Ross Trophy (leading scorer) and Hart Trophy (MVP) winners from 1980–1999.
+      Sourced from the award_winners seed. One row per award per season.
+    columns:
+      - name: award_name
+        description: Name of the award.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Art Ross Trophy', 'Hart Trophy']
+      - name: season_year
+        description: Season end-year the award was given.
+        tests:
+          - not_null
+      - name: winner
+        description: Player who won the award.
+        tests:
+          - not_null
+
+  - name: stg_stanley_cup_champions
+    description: >
+      Stanley Cup champion per season from 1980–1999.
+      The gretzky_on_roster flag identifies the four Edmonton Oilers championships
+      Gretzky was part of (1984, 1985, 1987, 1988).
+    columns:
+      - name: season_year
+        description: Season end-year the Cup was awarded.
+        tests:
+          - unique
+          - not_null
+      - name: champion
+        description: Winning team name.
+        tests:
+          - not_null
+      - name: gretzky_on_roster
+        description: True only for the 1984, 1985, 1987, and 1988 Edmonton Oilers championships.
+        tests:
+          - not_null
