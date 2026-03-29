@@ -31,7 +31,7 @@ select
     round(sum(assists)::numeric / nullif(sum(games_played), 0), 3) as assists_per_game,
     round(sum(points)::numeric / nullif(sum(games_played), 0), 3) as points_per_game,
 
-    -- 100-point seasons — a marker of elite production
+    -- 100-point seasons, a marker of elite production
     sum(case when points >= 100 then 1 else 0 end) as seasons_100_plus_points
 
 from enriched

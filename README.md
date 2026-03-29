@@ -92,6 +92,6 @@ dbt docs serve     # open in browser
 
 ## Data sources
 
-- **Player stats**: [NHL web API](https://api-web.nhle.com) via `nhl-api-py`
+- **Player stats**: [NHL web API](https://api-web.nhle.com)
 - **Award winners**: Static CSV seed (Hart Trophy, Art Ross Trophy 1980–1999)
 - **Stanley Cup champions**: Static CSV seed (1980–1999)

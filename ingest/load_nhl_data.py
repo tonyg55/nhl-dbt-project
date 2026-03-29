@@ -11,18 +11,19 @@ DB_URL    = os.environ["DATABASE_URL"]
 BASE_URL  = "https://api-web.nhle.com/v1"
 RAW_SCHEMA = "raw"
 
-# Top all-time scorers to pull for comparison context
+# Players to pull for the Gretzky narrative
 COMPARISON_PLAYER_IDS = [
     8447400,  # Wayne Gretzky
     8448208,  # Jaromir Jagr
     8449600,  # Mark Messier
     8446720,  # Gordie Howe
-    8448676,  # Ron Francis
-    8445180,  # Marcel Dionne
     8449474,  # Steve Yzerman
-    8445596,  # Phil Esposito
-    8452079,  # Teemu Selanne
-    8445693,  # Mike Gartner
+    8447935,  # Mario Lemieux
+    8448567,  # Joe Sakic
+    8471675,  # Sidney Crosby
+    8474141,  # Patrick Kane
+    8446404,  # Bobby Orr
+    8449048,  # Pavel Bure
 ]
 
 
