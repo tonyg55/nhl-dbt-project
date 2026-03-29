@@ -1,6 +1,8 @@
 # NHL Analytics — Just How Dominant Was Wayne Gretzky?
 
-A focused dbt portfolio project that quantifies Wayne Gretzky's statistical dominance over his 20-season NHL career.
+A focused dbt portfolio project that showcases being able to tell a story with data that runs in a production environment and quantifies Wayne Gretzky's statistical dominance over his 20-season NHL career. 
+
+Output here: https://lightthelamp.ai/
 
 ## The question this project answers
 
