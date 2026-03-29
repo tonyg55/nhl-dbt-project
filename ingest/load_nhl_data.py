@@ -11,9 +11,6 @@ DB_URL    = os.environ["DATABASE_URL"]
 BASE_URL  = "https://api-web.nhle.com/v1"
 RAW_SCHEMA = "raw"
 
-# Gretzky's NHL player ID — fixed forever
-GRETZKY_ID = 8447400
-
 # Top all-time scorers to pull for comparison context
 COMPARISON_PLAYER_IDS = [
     8447400,  # Wayne Gretzky
@@ -45,23 +42,47 @@ def load_table(engine, df: pd.DataFrame, table_name: str):
     df.to_sql(table_name, engine, schema=RAW_SCHEMA, if_exists="replace", index=False)
 
 
-def fetch_player_season_stats(player_id: int) -> list[dict]:
-    """Pull season-by-season regular season stats for one player."""
+def fetch_player_data(player_id: int) -> tuple[dict, list[dict]]:
+    """
+    Fetch one player from the NHL API landing endpoint.
+    Returns (metadata_row, season_stat_rows).
+    Both are derived from the same API call to avoid duplicate requests.
+    """
     url = f"{BASE_URL}/player/{player_id}/landing"
     resp = requests.get(url, timeout=10)
     resp.raise_for_status()
     data = resp.json()
 
-    rows = []
+    first = data.get("firstName", {}).get("default", "")
+    last  = data.get("lastName", {}).get("default", "")
+    full_name = f"{first} {last}".strip()
+
+    metadata = {
+        "player_id":       player_id,
+        "first_name":      first,
+        "last_name":       last,
+        "full_name":       full_name,
+        "position":        data.get("position"),
+        "shoots_catches":  data.get("shootsCatches"),
+        "birth_date":      data.get("birthDate"),
+        "birth_city":      data.get("birthCity", {}).get("default"),
+        "birth_country":   data.get("birthCountry"),
+        "height_inches":   data.get("heightInInches"),
+        "weight_lbs":      data.get("weightInPounds"),
+        "headshot_url":    data.get("headshot"),
+        "is_active":       data.get("isActive", False),
+    }
+
+    season_rows = []
     for season in data.get("seasonTotals", []):
-        if season.get("gameTypeId") != 2:  # 2 = regular season
+        if season.get("gameTypeId") != 2:  # 2 = regular season only
             continue
-        rows.append(
+        season_rows.append(
             {
                 "player_id":          player_id,
-                "player_name":        f"{data['firstName']['default']} {data['lastName']['default']}",
+                "player_name":        full_name,
                 "position":           data.get("position"),
-                "season":             season.get("season"),           # e.g. 19791980
+                "season":             season.get("season"),
                 "team_name":          season.get("teamName", {}).get("default"),
                 "games_played":       season.get("gamesPlayed", 0),
                 "goals":              season.get("goals", 0),
@@ -77,28 +98,31 @@ def fetch_player_season_stats(player_id: int) -> list[dict]:
                 "shooting_pct":       season.get("shootingPctg"),
             }
         )
-    return rows
+    return metadata, season_rows
 
 
-def ingest_player_season_stats(engine):
-    print("Fetching player season stats...")
-    all_rows = []
+def ingest_players(engine):
+    print("Fetching player data...")
+    all_metadata   = []
+    all_season_rows = []
+
     for pid in COMPARISON_PLAYER_IDS:
         try:
-            rows = fetch_player_season_stats(pid)
-            all_rows.extend(rows)
-            print(f"  ✓ player {pid} — {len(rows)} seasons")
+            meta, seasons = fetch_player_data(pid)
+            all_metadata.append(meta)
+            all_season_rows.extend(seasons)
+            print(f"  ✓ {meta['full_name']} — {len(seasons)} seasons")
         except Exception as e:
             print(f"  ✗ player {pid} failed: {e}")
 
-    df = pd.DataFrame(all_rows)
-    load_table(engine, df, "player_season_stats")
+    load_table(engine, pd.DataFrame(all_metadata),    "players")
+    load_table(engine, pd.DataFrame(all_season_rows), "player_season_stats")
 
 
 def main():
     engine = get_engine()
     ensure_schema(engine)
-    ingest_player_season_stats(engine)
+    ingest_players(engine)
     print("\nIngestion complete. Run `dbt seed` then `dbt build` next.")
 
 

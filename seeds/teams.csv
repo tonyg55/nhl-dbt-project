@@ -1,0 +1,33 @@
+team_abbr,team_name,city,conference,division,primary_color,secondary_color
+BOS,Boston Bruins,Boston,Eastern,Atlantic,#FFB81C,#000000
+BUF,Buffalo Sabres,Buffalo,Eastern,Atlantic,#003087,#FCB514
+DET,Detroit Red Wings,Detroit,Eastern,Atlantic,#CE1126,#FFFFFF
+FLA,Florida Panthers,Sunrise,Eastern,Atlantic,#C8102E,#002F87
+MTL,Montreal Canadiens,Montreal,Eastern,Atlantic,#AF1E2D,#003DA5
+OTT,Ottawa Senators,Ottawa,Eastern,Atlantic,#E31837,#000000
+TBL,Tampa Bay Lightning,Tampa,Eastern,Atlantic,#002868,#FFFFFF
+TOR,Toronto Maple Leafs,Toronto,Eastern,Atlantic,#003E7E,#FFFFFF
+CAR,Carolina Hurricanes,Raleigh,Eastern,Metropolitan,#CE1126,#000000
+CBJ,Columbus Blue Jackets,Columbus,Eastern,Metropolitan,#002654,#CE1126
+NJD,New Jersey Devils,Newark,Eastern,Metropolitan,#CE1126,#000000
+NYI,New York Islanders,Elmont,Eastern,Metropolitan,#003087,#FC4C02
+NYR,New York Rangers,New York,Eastern,Metropolitan,#0038A8,#CE1126
+PHI,Philadelphia Flyers,Philadelphia,Eastern,Metropolitan,#F74902,#000000
+PIT,Pittsburgh Penguins,Pittsburgh,Eastern,Metropolitan,#FCB514,#000000
+WSH,Washington Capitals,Washington,Eastern,Metropolitan,#C8102E,#041E42
+CHI,Chicago Blackhawks,Chicago,Western,Central,#CE1126,#000000
+COL,Colorado Avalanche,Denver,Western,Central,#6F263D,#236192
+DAL,Dallas Stars,Dallas,Western,Central,#006847,#8F8F8C
+MIN,Minnesota Wild,Saint Paul,Western,Central,#154734,#A6192E
+NSH,Nashville Predators,Nashville,Western,Central,#FFB81C,#041E42
+STL,St. Louis Blues,St. Louis,Western,Central,#002F87,#FCB514
+UTA,Utah Hockey Club,Salt Lake City,Western,Central,#6CACE4,#000000
+WPG,Winnipeg Jets,Winnipeg,Western,Central,#041E42,#004C97
+ANA,Anaheim Ducks,Anaheim,Western,Pacific,#F47A38,#000000
+CGY,Calgary Flames,Calgary,Western,Pacific,#CE1126,#F1BE48
+EDM,Edmonton Oilers,Edmonton,Western,Pacific,#FF4C00,#041E42
+LAK,Los Angeles Kings,Los Angeles,Western,Pacific,#111111,#A2AAAD
+SJS,San Jose Sharks,San Jose,Western,Pacific,#006D75,#000000
+SEA,Seattle Kraken,Seattle,Western,Pacific,#001628,#99D9D9
+VAN,Vancouver Canucks,Vancouver,Western,Pacific,#00843D,#041C2C
+VGK,Vegas Golden Knights,Las Vegas,Western,Pacific,#B4975A,#333F48

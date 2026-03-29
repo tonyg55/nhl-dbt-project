@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  - name: int_player_season_enriched
+    description: >
+      Central join hub for the season layer. Combines stg_player_season_stats with
+      player profile context from dim_players and team context from dim_teams.
+      Computes per-game rates. All downstream season-level and career-level models
+      source from here rather than each re-joining staging tables independently.
+    columns:
+      - name: player_id
+        description: NHL API player identifier.
+        tests:
+          - not_null
+      - name: season_year
+        description: Calendar year the season ended.
+        tests:
+          - not_null
+      - name: position_label
+        description: Human-readable position from dim_players (e.g. Center, Left Wing).
+      - name: conference
+        description: Team conference from dim_teams (Eastern or Western).
+      - name: points_per_game
+        description: Season points divided by games played. Rounded to 3 decimal places.
+
+  - name: int_player_career_totals
+    description: >
+      Career-level aggregation for all players sourced from int_player_season_enriched.
+      Single source of truth for career totals. Referenced by fct_player_career,
+      fct_player_dominance, mart_greats_comparison, and mart_gretzky_case_for_greatest.
+      Includes best_season_points and seasons_100_plus_points for analytics use.
+    columns:
+      - name: player_id
+        description: NHL API player identifier.
+        tests:
+          - unique
+          - not_null
+      - name: career_games
+        description: Total regular season games played across all seasons.
+        tests:
+          - not_null
+      - name: career_points
+        description: Total regular season points (goals + assists).
+        tests:
+          - not_null
+      - name: best_season_points
+        description: Single-season points record for this player.
+      - name: seasons_100_plus_points
+        description: Number of seasons the player scored 100 or more points. Gretzky has 15.
+
+  - name: int_player_award_counts
+    description: >
+      Pivots stg_award_winners into one row per player with hart_trophies and
+      art_ross_trophies as columns. Joins on player_name since the seed does not carry
+      player_id. Referenced by fct_player_career and mart_greats_comparison.
+    columns:
+      - name: player_name
+        description: Player name as it appears in the award_winners seed.
+        tests:
+          - unique
+          - not_null
+      - name: hart_trophies
+        description: Number of Hart Trophy (MVP) wins.
+        tests:
+          - not_null
+      - name: art_ross_trophies
+        description: Number of Art Ross Trophy (leading scorer) wins.
+        tests:
+          - not_null
+
+  - name: int_player_peer_benchmarks
+    description: >
+      Season-by-season rankings and dominance margins for all players in the dataset.
+      One row per player per season. Adds points_rank, goals_rank, assists_rank,
+      season leader totals, and margin_above_2nd_place (populated only for the
+      season points leader). Feeds mart_gretzky_case_for_greatest for dominance stats.
+    columns:
+      - name: player_id
+        description: NHL API player identifier.
+        tests:
+          - not_null
+      - name: season_year
+        description: Calendar year the season ended.
+        tests:
+          - not_null
+      - name: points_rank
+        description: Points rank among all players in the dataset for that season (1 = most).
+      - name: margin_above_2nd_place
+        description: >
+          For the season points leader only: how many more points they scored than
+          2nd place. Null for all non-leaders. Used to measure Gretzky's dominance
+          margin in seasons he led the dataset.
+      - name: points_behind_season_leader
+        description: How many points behind the season leader this player finished. 0 for the leader.

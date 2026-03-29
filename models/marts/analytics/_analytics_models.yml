@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: fct_player_dominance
+    description: >
+      Career comparison fact for all players. One row per player ranked by career points.
+      Adds all-time ranking columns, points_behind_leader, and assists_only_gap
+      (Gretzky's assists minus each player's career points — positive for every other player).
+      Powers the leaderboard table and bar chart visuals.
+    columns:
+      - name: player_id
+        tests:
+          - unique
+          - not_null
+      - name: all_time_points_rank
+        description: Career points rank among players in this dataset (1 = most).
+        tests:
+          - not_null
+      - name: points_behind_leader
+        description: How many career points behind the leader (Gretzky). 0 for Gretzky.
+      - name: assists_only_gap
+        description: >
+          Gretzky's career assists (1,963) minus this player's total career points.
+          Positive for every non-Gretzky player in the dataset — the signature dominance stat.
+      - name: is_gretzky
+        description: Boolean flag for front-end row highlighting.
+        tests:
+          - not_null
+
+  - name: mart_greats_comparison
+    description: >
+      Wide side-by-side comparison of all players in the dataset. One row per player.
+      Combines career stats, trophy counts, and dominance ranks into a single result
+      designed for the website's comparison table. Built on top of fct_player_career
+      and fct_player_dominance — no raw aggregation logic here.
+    columns:
+      - name: player_id
+        tests:
+          - unique
+          - not_null
+      - name: all_time_points_rank
+        description: Rank by career points among players in this dataset.
+        tests:
+          - not_null
+      - name: assists_only_gap
+        description: >
+          Gretzky's career assists minus this player's career points. A positive value
+          means Gretzky's assists alone beat this player's full career points total.
+      - name: is_gretzky
+        tests:
+          - not_null
+
+  - name: mart_gretzky_case_for_greatest
+    description: >
+      Single-row analytical showcase. Every data point needed to make the case
+      that Wayne Gretzky is the greatest offensive player in NHL history.
+      Combines career stats, trophy and Cup counts, peer benchmark dominance
+      metrics (seasons led scoring, average margin above 2nd place), and the
+      signature assists_vs_runner_up_gap stat. Intended to power a dedicated
+      "The Case for the Greatest" section on the website.
+    columns:
+      - name: player_id
+        tests:
+          - not_null
+      - name: career_points
+        description: Total career points. NHL all-time record — 2,857.
+        tests:
+          - not_null
+      - name: career_assists
+        description: Total career assists. NHL all-time record — 1,963.
+        tests:
+          - not_null
+      - name: hart_trophies
+        description: Hart Trophy (MVP) wins — 9. More than any other player.
+        tests:
+          - not_null
+      - name: art_ross_trophies
+        description: Art Ross Trophy (leading scorer) wins — 10.
+        tests:
+          - not_null
+      - name: stanley_cups
+        description: Stanley Cup championships with the Edmonton Oilers — 4.
+        tests:
+          - not_null
+      - name: seasons_led_scoring
+        description: >
+          Number of seasons Gretzky ranked #1 in points among players in this dataset.
+          Measures sustained dominance, not just career totals.
+      - name: avg_margin_when_led
+        description: >
+          Average points margin above 2nd place in seasons Gretzky led scoring.
+          A high number reflects how far ahead of the field he was, not just that he won.
+      - name: largest_margin_above_2nd
+        description: Largest single-season gap between Gretzky and the 2nd-place scorer.
+      - name: assists_vs_runner_up_gap
+        description: >
+          Gretzky's career assists minus the runner-up's total career points.
+          The single most cited stat about his dominance.
+      - name: best_season_points
+        description: His single-season points record (215 in 1985-86).
+      - name: seasons_100_plus_points
+        description: >
+          Seasons with 100 or more points. Gretzky has 15. No other player
+          in this dataset has more than 6.

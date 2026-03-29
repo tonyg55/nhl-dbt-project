@@ -3,10 +3,18 @@ version: 2
 sources:
   - name: raw
     description: >
-      Raw NHL data. Player season stats are loaded via ingest/load_nhl_data.py.
-      Award and Stanley Cup data are loaded via dbt seed from the seeds/ directory.
+      Raw NHL data. Player stats and metadata are loaded via ingest/load_nhl_data.py.
+      Award, Cup, and team data are loaded via dbt seed from the seeds/ directory.
     schema: raw
     tables:
+      - name: players
+        description: Player profile metadata extracted from the NHL API landing endpoint. One row per player.
+        columns:
+          - name: player_id
+            description: NHL API player identifier.
+          - name: full_name
+            description: Full player name.
+
       - name: player_season_stats
         description: Season-by-season regular season stats for Gretzky and comparison players, pulled from the NHL web API.
         columns:

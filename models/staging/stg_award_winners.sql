@@ -8,10 +8,10 @@ with source as (
 
 select
     award_name,
-    season_year::int                as season_year,
+    season_year::int as season_year,
     winner,
     team,
-    points_that_season::int         as points_that_season
+    points_that_season::int as points_that_season
 
 from source
 where award_name is not null

@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: dim_players
+    description: >
+      Player dimension. Descriptive attributes only — no stats or facts.
+      One row per player. Join to any fact table on player_id.
+    columns:
+      - name: player_id
+        description: NHL API player identifier.
+        tests:
+          - unique
+          - not_null
+      - name: full_name
+        tests:
+          - not_null
+      - name: position_label
+        description: Human-readable position (e.g. Center, Left Wing, Defenseman).
+      - name: birth_country_label
+        description: Full country name derived from the three-letter birth_country code.
+
+  - name: dim_teams
+    description: >
+      Team dimension. One row per NHL franchise. Join to season facts on team_name
+      to enrich with conference, division, and brand colors.
+    columns:
+      - name: team_abbr
+        description: Three or four-letter team abbreviation.
+        tests:
+          - unique
+          - not_null
+      - name: team_name
+        tests:
+          - not_null
+      - name: conference
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Eastern', 'Western']
+      - name: division
+        tests:
+          - not_null
+
+  - name: fct_player_season_stats
+    description: >
+      Season-level fact. One row per player per season. Enrichment is resolved
+      upstream in int_player_season_enriched. This model adds peer rankings from
+      int_player_peer_benchmarks and a points YoY delta window function.
+      Primary table for season-by-season trend charts and leaderboards.
+    columns:
+      - name: player_id
+        tests:
+          - not_null
+      - name: season_year
+        tests:
+          - not_null
+      - name: points_rank
+        description: Points rank among players in the dataset for that season (1 = most).
+      - name: points_behind_season_leader
+        description: How many points behind the season leader. 0 for the leader.
+      - name: points_yoy_delta
+        description: Change in points vs. this player's prior season. Null for first season.
+
+  - name: fct_player_career
+    description: >
+      Career fact for all players in the dataset. One row per player.
+      Combines int_player_career_totals with trophy counts from int_player_award_counts.
+      The foundational career table — analytics marts build on top of this.
+    columns:
+      - name: player_id
+        tests:
+          - unique
+          - not_null
+      - name: career_points
+        description: Total regular season career points.
+        tests:
+          - not_null
+      - name: best_season_points
+        description: Single-season points record for this player.
+      - name: seasons_100_plus_points
+        description: Number of seasons the player scored 100 or more points.
+      - name: hart_trophies
+        description: Hart Trophy (MVP) wins. 0 if player never won.
+        tests:
+          - not_null
+      - name: art_ross_trophies
+        description: Art Ross Trophy (leading scorer) wins. 0 if player never won.
+        tests:
+          - not_null
